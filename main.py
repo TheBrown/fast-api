@@ -1,13 +1,23 @@
 from typing import Union
 from enum import Enum
-
 from fastapi import FastAPI
+from pydantic import BaseModel
+
+fake_items_db = [{"item_name": "Love"}, {
+    "item_name": "You"}, {"item_name": "My Heart"}]
 
 
 class ModelName(str, Enum):
     bobby = "bobby"
     alexis = "alexis"
     novak = "novak"
+
+
+class Item(BaseModel):
+    name: str
+    description: Union[str, None] = None
+    price: float
+    tax: Union[float, None] = None
 
 
 app = FastAPI()
@@ -41,8 +51,15 @@ async def get_model(model_name: ModelName):
         return {"model_name": model_name, "message": "Hi Novak model!"}
     return {"model_name": model_name, "message": "there are some problems with this model"}
 
-fake_items_db = [{"item_name": "Love"}, {"item_name": "You"}, {"item_name": "My Heart"}]
 
 @app.get("/items")
 async def get_items(skip: int = 0, limit: int = 10):
     return fake_items_db[skip: skip + limit]
+
+@app.post("/items")
+async def create_item(item: Item):
+    items_dict = item.dict()
+    if item.tax:
+        price_with_tax = item.price + item.tax
+        items_dict.update({"price_with_tax": price_with_tax})
+    return items_dict
