@@ -1,6 +1,6 @@
 from typing import Union
 from enum import Enum
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 
 fake_items_db = [{"item_name": "Love"}, {
@@ -56,6 +56,7 @@ async def get_model(model_name: ModelName):
 async def get_items(skip: int = 0, limit: int = 10):
     return fake_items_db[skip: skip + limit]
 
+
 @app.post("/items")
 async def create_item(item: Item):
     items_dict = item.dict()
@@ -63,3 +64,21 @@ async def create_item(item: Item):
         price_with_tax = item.price + item.tax
         items_dict.update({"price_with_tax": price_with_tax})
     return items_dict
+
+
+@app.get("/products")
+async def read_products(q: Union[str, None] = Query(
+    default=None,
+    alias="product-query",
+    title="Query String",
+    description="Query String for the items to search in the database thae have a good match",
+    min_length=3,
+    max_length=50,
+    regex="^fixedquery$",
+),
+):
+    results = {"products": [{"product_id": "I"}, {
+        "product_id": "Love"}, {"product_id": "You"}]}
+    if q:
+        results.update({"q": q})
+    return results
