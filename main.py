@@ -20,6 +20,11 @@ class Item(BaseModel):
     tax: Union[float, None] = None
 
 
+class User(BaseModel):
+    username: str
+    full_name: Union[str, None] = None
+
+
 app = FastAPI()
 
 
@@ -65,6 +70,22 @@ async def read_items(
     results = {"item_id": item_id}
     if q:
         results.update({"q": q})
+    return results
+
+
+@app.put("/items/{item_id}")
+async def update_item(
+        *,
+        item_id: int = Path(title="The Id of the item to get", ge=0, le=100),
+        q: Union[str, None] = None,
+        item: Union[str, None] = None,
+        user: User
+):
+    results = {"item_id": item_id, "user": user}
+    if q:
+        results.update({"q": q})
+    if item:
+        results.update({"item": item})
     return results
 
 
