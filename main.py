@@ -1,6 +1,6 @@
 from typing import Union
 from enum import Enum
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Path
 from pydantic import BaseModel
 
 fake_items_db = [{"item_name": "Love"}, {
@@ -40,7 +40,7 @@ async def read_user_me():
 
 @app.get("/users/{user_id}")
 async def read_user(user_id: str):
-    return {"user_id":  user_id}
+    return {"user_id": user_id}
 
 
 @app.get("/models/{model_name}")
@@ -55,6 +55,17 @@ async def get_model(model_name: ModelName):
 @app.get("/items")
 async def get_items(skip: int = 0, limit: int = 10):
     return fake_items_db[skip: skip + limit]
+
+
+@app.get("/items/{item_id}")
+async def read_items(
+        item_id: int = Path("The ID of the item to get"),
+        q: Union[str, None] = Query(default=None, alias="item-query")
+):
+    results = {"item_id": item_id}
+    if q:
+        results.update({"q": q})
+    return results
 
 
 @app.post("/items")
