@@ -1,7 +1,7 @@
 from typing import Union
 from enum import Enum
 from fastapi import FastAPI, Query, Path
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 fake_items_db = [{"item_name": "Love"}, {
     "item_name": "You"}, {"item_name": "My Heart"}]
@@ -15,8 +15,10 @@ class ModelName(str, Enum):
 
 class Item(BaseModel):
     name: str
-    description: Union[str, None] = None
-    price: float
+    description: Union[str, None] = Field(
+        default=None, title="The description for the item.", max_length=300
+    )
+    price: float = Field(gt=0, description="The price must be greater than zero")
     tax: Union[float, None] = None
 
 
