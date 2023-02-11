@@ -1,10 +1,21 @@
 from typing import Union, List
 from enum import Enum
-from fastapi import FastAPI, Query, Path
+from fastapi import FastAPI, Query, Path, Body
 from pydantic import BaseModel, Field, HttpUrl
 
 fake_items_db = [{"item_name": "Love"}, {
     "item_name": "You"}, {"item_name": "My Heart"}]
+
+
+class Config:
+    schema_extra = {
+        "example": {
+            "name": "Bobby",
+            "description": "A very nice person",
+            "price": 1000000,
+            "tax": 55000
+        }
+    }
 
 
 class ModelName(str, Enum):
@@ -16,15 +27,17 @@ class ModelName(str, Enum):
 class Image(BaseModel):
     url: HttpUrl
     name: str
+
+
 class Item(BaseModel):
-    name: str
+    name: str = Field(example="Foo")
     description: Union[str, None] = Field(
         default=None, title="The description for the item.", max_length=300
     )
     price: float = Field(gt=0, description="The price must be greater than zero")
     tax: Union[float, None] = None
     tags: List[str] = set()
-    images: Union[List[Image], None] = None
+    images: Union[List[Image], None] = Field(default=None, example=3.4)
 
 
 class User(BaseModel):
@@ -83,14 +96,37 @@ async def read_items(
 @app.put("/items/{item_id}")
 async def update_item(
         *,
-        item_id: int = Path(title="The Id of the item to get", ge=0, le=100),
-        q: Union[str, None] = None,
-        item: Union[str, None] = None,
+        item_id: int,
+        item: Item = Body(examples={
+            "normal": {
+                "summary": "A normal example",
+                "description": "A **normal** item works correctly.",
+                "value": {
+                    "name": "Foo",
+                    "description": "A very nice Item",
+                    "price": 35.4,
+                    "tax": 3.2,
+                },
+            },
+            "converted": {
+                "summary": "An example with converted data",
+                "description": "FastAPI can convert price `strings` to actual `numbers` automatically",
+                "value": {
+                    "name": "Bar",
+                    "price": "35.4",
+                },
+            },
+            "invalid": {
+                "summary": "Invalid data is rejected with an error",
+                "value": {
+                    "name": "Baz",
+                    "price": "thirty five point four",
+                },
+            },
+        }),
         user: User
 ):
     results = {"item_id": item_id, "user": user}
-    if q:
-        results.update({"q": q})
     if item:
         results.update({"item": item})
     return results
