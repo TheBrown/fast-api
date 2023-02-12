@@ -1,6 +1,6 @@
 from typing import Union, List
 from enum import Enum
-from fastapi import FastAPI, Query, Path, Body
+from fastapi import FastAPI, Query, Path, Body, Cookie
 from pydantic import BaseModel, Field, HttpUrl
 from uuid import UUID
 from datetime import datetime, time, timedelta
@@ -53,6 +53,11 @@ app = FastAPI()
 @app.get("/")
 async def read_root():
     return {"Hello": "World", "message": "Play with fast api"}
+
+
+@app.get("/items-cookie")
+async def read_items(ads_id: Union[str, None] = Cookie(default=None)):
+    return {"ads_id": ads_id}
 
 
 @app.get("/items/{item_id}")
