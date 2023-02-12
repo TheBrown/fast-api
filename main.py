@@ -1,6 +1,6 @@
 from typing import Union, List
 from enum import Enum
-from fastapi import FastAPI, Query, Path, Body, Cookie
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header
 from pydantic import BaseModel, Field, HttpUrl
 from uuid import UUID
 from datetime import datetime, time, timedelta
@@ -53,6 +53,15 @@ app = FastAPI()
 @app.get("/")
 async def read_root():
     return {"Hello": "World", "message": "Play with fast api"}
+
+
+@app.get("/items-header")
+async def read_items(
+        user_agent: Union[str, None] = Header(default=None),
+        strange_header: Union[str, None] = Header(default=None, convert_underscores=False),
+        x_token: Union[List[str], None] = Header(default=None)
+):
+    return {"User-agent": user_agent, "strange_header": strange_header, "X-Token values": x_token}
 
 
 @app.get("/items-cookie")
