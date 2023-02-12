@@ -1,7 +1,7 @@
-from typing import Union, List
+from typing import Union, List, Any
 from enum import Enum
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
 
@@ -42,9 +42,27 @@ class Item(BaseModel):
     images: Union[List[Image], None] = Field(default=None, example=3.4)
 
 
+class MyItem(BaseModel):
+    name: str
+    description: Union[str, None] = None
+    price: float
+    tax: Union[float, None] = None
+    tags: List[str] = []
+
+
 class User(BaseModel):
     username: str
     full_name: Union[str, None] = None
+
+
+class BaseUser(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Union[str, None] = None
+
+
+class UserIn(BaseUser):
+    password: str
 
 
 app = FastAPI()
@@ -155,3 +173,21 @@ async def read_products(q: Union[str, None] = Query(
     if q:
         results.update({"q": q})
     return results
+
+
+@app.post("/my-items")
+async def create_item(item: MyItem) -> MyItem:
+    return item
+
+
+@app.get("/my-items")
+async def read_items() -> List[MyItem]:
+    return [
+        MyItem(name="Portal Gun", price=42.0),
+        MyItem(name="Plumbus", price=32.0),
+    ]
+
+
+@app.post("/user")
+async def create_user(user: UserIn) -> BaseUser:
+    return user
