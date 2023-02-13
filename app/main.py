@@ -1,12 +1,14 @@
 from typing import Union, List, Any
 from enum import Enum
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
 
 fake_items_db = [{"item_name": "Love"}, {
     "item_name": "You"}, {"item_name": "My Heart"}]
+
+wrestler_list = {"foo": "The Foo Wrestlers"}
 
 
 class Config:
@@ -88,6 +90,15 @@ app = FastAPI()
 @app.get("/")
 async def read_root():
     return {"Hello": "World", "message": "Play with fast api"}
+
+
+@app.get("/wrestlers/{wrestler_id}")
+async def read_wrestler(wrestler_id: str):
+    if wrestler_id not in wrestler_list:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Wrestler not found!",
+                            headers={"X-Error": "There goes my error"})
+    return {"wrestler": wrestler_list[wrestler_id]}
 
 
 @app.get("/items-header")

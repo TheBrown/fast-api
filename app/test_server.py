@@ -13,3 +13,5 @@ print(create_new_user_response.text)
 print("status code: ",
       requests.post(server + "/items", json={"name": "example_name", "value": "idk", "price": 10.0}).status_code)
 print("body: ", requests.post(server + "/items", json={"name": "example_name", "value": "idk", "price": 10.0}).text)
+
+print(requests.get(server + "/wrestlers/fool").headers)
