@@ -1,6 +1,6 @@
 from typing import Union, List, Any
 from enum import Enum
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
@@ -165,7 +165,7 @@ async def read_items(
     }
 
 
-@app.post("/items")
+@app.post("/items", status_code=status.HTTP_201_CREATED)
 async def create_item(item: Item):
     items_dict = item.dict()
     if item.tax:

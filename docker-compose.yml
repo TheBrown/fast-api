@@ -1,5 +1,5 @@
 services:
-  api:
+  core:
     build: .
     container_name: fastapi-application
     environment:
