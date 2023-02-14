@@ -1,9 +1,12 @@
 from typing import Union, List, Any
 from enum import Enum
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
+
+fake_db = {}
 
 fake_items_db = [{"item_name": "Love"}, {
     "item_name": "You"}, {"item_name": "My Heart"}]
@@ -50,6 +53,11 @@ class MyItem(BaseModel):
     price: float
     tax: Union[float, None] = None
     tags: List[str] = []
+
+class ItemJsonCompatible(BaseModel):
+    title: str
+    timestamp: datetime
+    description: Union[str, None] = None
 
 
 class UserBase(BaseModel):
@@ -174,6 +182,13 @@ async def read_items(
         "start_process": start_process,
         "duration": duration
     }
+
+
+@app.put("/items-json-compatible/{id}")
+def update_item(id: str, item: ItemJsonCompatible):
+    json_compatible_item_data = jsonable_encoder(item)
+    fake_db[id] = json_compatible_item_data
+    return {"time_stamp": item.timestamp, "message": "Good to go!"}
 
 
 @app.post("/items", status_code=status.HTTP_201_CREATED)

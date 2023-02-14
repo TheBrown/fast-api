@@ -1,4 +1,6 @@
 import requests
+import time
+import calendar
 
 server = "http://127.0.0.1:8000";
 print(requests.get(server).json())
@@ -15,3 +17,7 @@ print("status code: ",
 print("body: ", requests.post(server + "/items", json={"name": "example_name", "value": "idk", "price": 10.0}).text)
 
 print(requests.get(server + "/wrestlers/fool").headers)
+
+current_GMT = time.gmtime()
+time_stamp = calendar.timegm(current_GMT)
+print(requests.put(server + "/items-json-compatible/20", json={"title": "It's Valentine's Day", "timestamp": time_stamp}).text)
