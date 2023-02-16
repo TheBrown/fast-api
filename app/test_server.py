@@ -20,9 +20,12 @@ print(requests.get(server + "/wrestlers/fool").headers)
 
 current_GMT = time.gmtime()
 time_stamp = calendar.timegm(current_GMT)
-print(requests.put(server + "/items-json-compatible/20", json={"title": "It's Valentine's Day", "timestamp": time_stamp}).text)
+print(requests.put(server + "/items-json-compatible/20",
+                   json={"title": "It's Valentine's Day", "timestamp": time_stamp}).text)
 
-
-print(requests.get(server + "/protected/items", headers={"x-token": "fake-super-secret-token", "x-key": "fake-super-secret-key"}).text)
+print(requests.get(server + "/protected/items",
+                   headers={"x-token": "fake-super-secret-token", "x-key": "fake-super-secret-key"}).text)
 
 print(requests.get(server + "/protected/products").text)
+
+print(requests.get(server + "/users/me"))
