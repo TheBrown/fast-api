@@ -1,6 +1,6 @@
 from typing import Union, List, Any
 from enum import Enum
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException, Depends
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
@@ -54,6 +54,7 @@ class MyItem(BaseModel):
     tax: Union[float, None] = None
     tags: List[str] = []
 
+
 class ItemJsonCompatible(BaseModel):
     title: str
     timestamp: datetime
@@ -92,12 +93,28 @@ def fake_save_user(user_in: UserIn):
     return user_in_db
 
 
+async def verify_token(x_token: str = Header()):
+    if x_token != "fake-super-secret-token":
+        raise HTTPException(status_code=400, detail="X-Token header invalid")
+
+
+async def verify_key(x_key: str = Header()):
+    if x_key != "fake-super-secret-key":
+        raise HTTPException(status_code=400, detail="X-Key header invalid")
+    return x_key
+
+
 app = FastAPI()
 
 
 @app.get("/")
 async def read_root():
     return {"Hello": "World", "message": "Play with fast api"}
+
+
+@app.get("/protected/items", dependencies=[Depends(verify_token), Depends(verify_key)])
+async def read_items():
+    return [{"item": "Foo"}, {"item": "Bar"}]
 
 
 @app.get("/wrestlers/{wrestler_id}")
