@@ -104,7 +104,7 @@ async def verify_key(x_key: str = Header()):
     return x_key
 
 
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(verify_token()), Depends(verify_key())])
 
 
 @app.get("/")
