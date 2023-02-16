@@ -24,3 +24,5 @@ print(requests.put(server + "/items-json-compatible/20", json={"title": "It's Va
 
 
 print(requests.get(server + "/protected/items", headers={"x-token": "fake-super-secret-token", "x-key": "fake-super-secret-key"}).text)
+
+print(requests.get(server + "/protected/products").text)

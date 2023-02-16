@@ -2,6 +2,7 @@ from typing import Union, List, Any
 from enum import Enum
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException, Depends
 from fastapi.encoders import jsonable_encoder
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
@@ -104,7 +105,9 @@ async def verify_key(x_key: str = Header()):
     return x_key
 
 
-app = FastAPI(dependencies=[Depends(verify_token()), Depends(verify_key())])
+# app = FastAPI(dependencies=[Depends(verify_token), Depends(verify_key)])
+app = FastAPI()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @app.get("/")
@@ -115,6 +118,11 @@ async def read_root():
 @app.get("/protected/items", dependencies=[Depends(verify_token), Depends(verify_key)])
 async def read_items():
     return [{"item": "Foo"}, {"item": "Bar"}]
+
+
+@app.get("/protected/products")
+async def read_products(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
 
 
 @app.get("/wrestlers/{wrestler_id}")
