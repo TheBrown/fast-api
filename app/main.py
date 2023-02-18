@@ -3,6 +3,7 @@ from enum import Enum
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException, Depends, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
@@ -39,6 +40,21 @@ wrestler_list = {"foo": "The Foo Wrestlers"}
 
 # app = FastAPI(dependencies=[Depends(verify_token), Depends(verify_key)])
 app = FastAPI()
+
+origins = [
+    "http://localhost.tianglo.com",
+    "https://localhost.tianglo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 @app.middleware("http")
