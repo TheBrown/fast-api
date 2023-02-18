@@ -1,6 +1,6 @@
 from typing import Union, List, Any
 from enum import Enum
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException, Depends
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPException, Depends, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -39,6 +39,15 @@ wrestler_list = {"foo": "The Foo Wrestlers"}
 
 # app = FastAPI(dependencies=[Depends(verify_token), Depends(verify_key)])
 app = FastAPI()
+
+
+@app.middleware("http")
+async def add_process_time_head(request: Request, call_next):
+    start_time = datetime.now()
+    response = await call_next(request)
+    process_time = datetime.now() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
 
 
 def fake_hash_password(password: str):
