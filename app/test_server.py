@@ -29,3 +29,5 @@ print(requests.get(server + "/protected/items",
 print(requests.get(server + "/protected/products").text)
 
 print(requests.get(server + "/users/me"))
+
+print(requests.post(server + "/send-notification/bobby@email.com").text)
