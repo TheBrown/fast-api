@@ -4,6 +4,7 @@ from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPExce
 from fastapi.encoders import jsonable_encoder
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
@@ -71,6 +72,7 @@ tags_metadata = [
 ]
 
 app = FastAPI(openapi_tags=tags_metadata)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 origins = [
     "http://localhost.tianglo.com",
