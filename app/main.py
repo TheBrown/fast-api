@@ -4,7 +4,7 @@ from fastapi import FastAPI, Query, Path, Body, Cookie, Header, status, HTTPExce
 from fastapi.encoders import jsonable_encoder
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.testclient import TestClient
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
@@ -72,7 +72,6 @@ tags_metadata = [
 ]
 
 app = FastAPI(openapi_tags=tags_metadata)
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 origins = [
     "http://localhost.tianglo.com",
@@ -279,6 +278,15 @@ async def verify_key(x_key: str = Header()):
 @app.get("/")
 async def read_root():
     return {"Hello": "World", "message": "Play with fast api"}
+
+
+client = TestClient(app)
+
+
+def test_read_main():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"Hello": "World", "message": "Play with fast api"}
 
 
 @app.post("/token", response_model=Token)
