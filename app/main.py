@@ -39,7 +39,37 @@ fake_users_db = {
 wrestler_list = {"foo": "The Foo Wrestlers"}
 
 # app = FastAPI(dependencies=[Depends(verify_token), Depends(verify_key)])
-app = FastAPI()
+
+description = """
+ChimichangeApp API Helps you do awesome stuff. 🚀
+
+## Items
+
+You can **read items**.
+
+## Users
+
+You will be able to:
+
+* **Create users** (_not implemented_).
+* **Read users** (_not implemented_).
+ """
+
+app = FastAPI(
+    title="ChimichangeApp",
+    description=description,
+    version="0.0.1",
+    terms_of_service="http://example.com/terms",
+    contact={
+        "name": "Deadpoolio the Amazing",
+        "url": "http://x-force.example.com/contact/",
+        "email": "dp@x-force.example.com"
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+)
 
 origins = [
     "http://localhost.tianglo.com",
