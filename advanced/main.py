@@ -1,36 +1,25 @@
-from typing import List
+from typing import Union
 
-import yaml
-from fastapi import FastAPI, Request, HTTPException
-from pydantic import BaseModel, ValidationError
+from fastapi import FastAPI, status, Body
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-
-class Item(BaseModel):
-    name: str
-    tags: List[str]
+items = {"foo": {"name": "Fighters", "size": 6}, "bar": {"name": "Tenders", "size": 3}}
 
 
-@app.post(
-    "/items",
-    openapi_extra={
-        "requestBody": {
-            "content": {"application/x-yaml": {"schema": Item.schema()}},
-            "required": True
-        }
-
-    }
-)
-async def create_item(request: Request):
-    raw_body = await request.body()
-    try:
-        data = yaml.safe_load(raw_body)
-    except yaml.YAMLError:
-        raise HTTPException(status_code=422, detail="Invalid YAML")
-    try:
-        item = Item.parse_obj(data)
-    except ValidationError as e:
-        raise HTTPException(status_code=422, detail=e.errors())
-    return item
-
+@app.put("/items/{item_id}")
+async def upsert_item(
+        item_id: str,
+        name: Union[str, None] = Body(default=None),
+        size: Union[int, None] = Body(default=None)
+):
+    if item_id in items:
+        item = items[item_id]
+        item["name"] = name
+        item["size"] = size
+        return item
+    else:
+        item = {"name": name, "size": size}
+        items[item_id] = item
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=item)
