@@ -1,10 +1,11 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Response
 
 app = FastAPI()
 
-def generate_html_response():
-    html_content = """
+
+@app.get("/legacy/")
+def get_legacy_data():
+    data = """
     <html>
         <head>
             <title>Some HTML in here</title>
@@ -15,9 +16,4 @@ def generate_html_response():
         </body>
     </html>
     """
-    return HTMLResponse(content=html_content, status_code=200)
-
-
-@app.get("/items", response_class=HTMLResponse)
-async def read_items():
-    return generate_html_response()
+    return Response(content=data, media_type="application/xml")
