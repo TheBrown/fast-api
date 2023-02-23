@@ -3,9 +3,7 @@ from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-
-@app.get("/items")
-async def read_items():
+def generate_html_response():
     html_content = """
     <html>
         <head>
@@ -17,5 +15,9 @@ async def read_items():
         </body>
     </html>
     """
-
     return HTMLResponse(content=html_content, status_code=200)
+
+
+@app.get("/items", response_class=HTMLResponse)
+async def read_items():
+    return generate_html_response()
