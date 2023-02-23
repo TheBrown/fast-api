@@ -1,14 +1,14 @@
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi.responses import StreamingResponse
 
 app = FastAPI()
 
 
-@app.get("/typer")
-async def redirect_typer():
-    return RedirectResponse("https://typer.tiangolo.com")
+async def fake_video_streamer():
+    for i in range(555):
+        yield b"some fake video bytes"
 
 
-@app.get("/saleumsack", response_class=RedirectResponse)
-async def redirect_fastapi():
-    return "https://saleumsack.com"
+@app.get("/")
+async def main():
+    return StreamingResponse(fake_video_streamer())
