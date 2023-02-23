@@ -1,10 +1,18 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from typing import Any
+import orjson
+from fastapi import FastAPI, Response
 
-some_file_path = "large-video-file.txt"
 app = FastAPI()
 
 
-@app.get("/")
+class CustomORJSONResponse(Response):
+    media_type = "application/json"
+
+    def render(self, content: Any) -> bytes:
+        assert orjson is not None, "orjson must be installed"
+        return orjson.dumps(content, option=orjson.OPT_INDENT_2)
+
+
+@app.get("/", response_class=CustomORJSONResponse)
 async def main():
-    return FileResponse(some_file_path)
+    return {"message": "Hello World"}
