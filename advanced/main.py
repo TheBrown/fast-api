@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import UJSONResponse
 
 app = FastAPI()
 
 
-@app.get("/", response_class=PlainTextResponse)
-async def main():
-    return "Hello World"
+@app.get("/items/", response_class=UJSONResponse)
+async def read_items():
+    return [{"item_id": "Foo"}]
