@@ -1,14 +1,10 @@
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse
 
+some_file_path = "large-video-file.txt"
 app = FastAPI()
-
-
-async def fake_video_streamer():
-    for i in range(555):
-        yield b"some fake video bytes"
 
 
 @app.get("/")
 async def main():
-    return StreamingResponse(fake_video_streamer())
+    return FileResponse(some_file_path)
