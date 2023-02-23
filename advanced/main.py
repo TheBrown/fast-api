@@ -1,18 +1,9 @@
-from typing import Any
-import orjson
 from fastapi import FastAPI, Response
+from fastapi.responses import ORJSONResponse
 
-app = FastAPI()
-
-
-class CustomORJSONResponse(Response):
-    media_type = "application/json"
-
-    def render(self, content: Any) -> bytes:
-        assert orjson is not None, "orjson must be installed"
-        return orjson.dumps(content, option=orjson.OPT_INDENT_2)
+app = FastAPI(default_response_class=ORJSONResponse)
 
 
-@app.get("/", response_class=CustomORJSONResponse)
-async def main():
-    return {"message": "Hello World"}
+@app.get("/items")
+async def read_items():
+    return [{"item_id": "Foo"}]
