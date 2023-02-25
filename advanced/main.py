@@ -1,21 +1,33 @@
-from fastapi import FastAPI, Depends
+import secrets
+
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 app = FastAPI()
 
-
-class FixedContentQueryChecker:
-    def __int__(self, fixed_content: str):
-        self.fixed_content = fixed_content
-
-    def __call__(self, q: str = ""):
-        if q:
-            return self.fixed_content in q
-        return False
+security = HTTPBasic()
 
 
-checker = FixedContentQueryChecker("bar")
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    current_username_bytes = credentials.username.encode("utf8")
+    correct_username_bytes = b"bobby"
+    is_correct_username = secrets.compare_digest(
+        current_username_bytes, correct_username_bytes
+    )
+    current_password_bytes = credentials.password.encode("utf8")
+    correct_password_bytes = b"iloveyou"
+    is_correct_password = secrets.compare_digest(
+        current_password_bytes, correct_password_bytes
+    )
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"}
+        )
+    return credentials.username
 
 
-@app.get("/query-checker")
-async def read_query_check(fixed_content_included: bool = Depends(checker)):
-    return {"fixed_content_in_query": fixed_content_included}
+@app.get("/users/me")
+def read_current_user(username: str = Depends(get_current_username)):
+    return {"username": username}
