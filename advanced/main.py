@@ -1,20 +1,11 @@
-from dataclasses import dataclass
-from typing import Union
-
 from fastapi import FastAPI
-
-
-@dataclass
-class Item:
-    name: str
-    price: float
-    description: Union[str, None] = None
-    tax: Union[float, None] = None
-
+from fastapi.middleware.gzip import GZipMiddleware
 
 app = FastAPI()
 
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-@app.post("/items")
-async def create_item(item: Item):
-    return item
+
+@app.get("/")
+async def main():
+    return "somebigcontent"
