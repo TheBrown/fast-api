@@ -1,9 +1,20 @@
-from fastapi import FastAPI, Request
+from dataclasses import dataclass
+from typing import Union
+
+from fastapi import FastAPI
+
+
+@dataclass
+class Item:
+    name: str
+    price: float
+    description: Union[str, None] = None
+    tax: Union[float, None] = None
+
 
 app = FastAPI()
 
 
-@app.get("/items/{item_id}")
-def read_root(item_id: str, request: Request):
-    client_host = request.client.host
-    return {"client_host": client_host, "item_id": item_id}
+@app.post("/items")
+async def create_item(item: Item):
+    return item
