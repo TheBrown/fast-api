@@ -1,35 +1,30 @@
-from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+def get_user(user_id: int):
+    return models.User.filter(models.User.id == user_id).first()
 
 
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+def get_user_by_email(email: str):
+    return models.User.filter(models.User.email == email).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_users(skip: int = 0, limit: int = 100):
+    return list(models.User.select().offset(skip).limit(limit))
 
 
-def create_users(db: Session, user: schemas.UserCreate):
+def create_users(user: schemas.UserCreate):
     fake_hashed_password = user.password + "notreallyhashed"
     db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    db_user.save()
     return db_user
 
 
-def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Item).offset(skip).limit(limit).all()
+def get_items(skip: int = 0, limit: int = 100):
+    return list(models.Item.select().offset(skip).limit(limit))
 
 
-def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
+def create_user_item(item: schemas.ItemCreate, user_id: int):
     db_item = models.Item(**item.dict(), owner_id=user_id)
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
+    db_item.save()
     return db_item
