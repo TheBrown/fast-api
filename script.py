@@ -22,4 +22,5 @@ import os
 # os.system("ADMIN_EMAIL='deadpool@example.com' APP_NAME='ChimichangApp' python3 -m uvicorn env.main:app --reload")
 # os.system("python3 -m uvicorn env.main:app --reload")
 # os.system("python3 -m  uvicorn conditional_openapi.main:app --reload")
-os.system("python3 -m  uvicorn openapi_callback.main:app --reload")
+# os.system("python3 -m  uvicorn openapi_callback.main:app --reload")
+os.system("python3 -m  uvicorn wsgi.main:app --reload")
