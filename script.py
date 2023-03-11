@@ -24,4 +24,5 @@ import os
 # os.system("python3 -m  uvicorn conditional_openapi.main:app --reload")
 # os.system("python3 -m  uvicorn openapi_callback.main:app --reload")
 # os.system("python3 -m  uvicorn wsgi.main:app --reload")
-os.system("python3 -m  uvicorn generate_clients.main:app --reload")
+# os.system("python3 -m  uvicorn generate_clients.main:app --reload")
+os.system("python3 -m  uvicorn fastapideta.main:app --reload")
