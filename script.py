@@ -25,4 +25,5 @@ import os
 # os.system("python3 -m  uvicorn openapi_callback.main:app --reload")
 # os.system("python3 -m  uvicorn wsgi.main:app --reload")
 # os.system("python3 -m  uvicorn generate_clients.main:app --reload")
-os.system("python3 -m  uvicorn fastapideta.main:app --reload")
+# os.system("python3 -m  uvicorn fastapideta.main:app --reload
+os.system("python3 -m gunicorn fastapideta.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80")
