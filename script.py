@@ -27,4 +27,5 @@ import os
 # os.system("python3 -m  uvicorn generate_clients.main:app --reload")
 # os.system("python3 -m  uvicorn fastapideta.main:app --reload")
 # os.system("python3 -m gunicorn fastapideta.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80")
-os.system("python3 -m  uvicorn fastapideta.main:app  --host 0.0.0.0 --port 8080 --workers 4")
+# os.system("python3 -m  uvicorn fastapideta.main:app  --host 0.0.0.0 --port 8080 --workers 4")
+os.system("python3 -m  uvicorn docker.main:app --reload")
